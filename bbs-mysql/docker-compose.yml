@@ -9,13 +9,30 @@ services:
     environment:
       TZ: "Europe/Berlin"
       MYSQL_ROOT_PASSWORD: "bbs!test123"
+      MYSQL_DATABASE: bitbucket
+      MYSQL_USER: bitbucket
+      MYSQL_PASSWORD: "bbs!user123"
     mem_limit: 512m
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+  pma:
+    image: phpmyadmin/phpmyadmin:4.8.5
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Berlin"
+    volumes:
+      - /sessions
+    ports:
+      - 8080:80
+    links:
+      - db:db
+    depends_on:
+      - db
   server:
     build: .
+    restart: unless-stopped
     environment:
       TZ: "Europe/Berlin"
     volumes:
