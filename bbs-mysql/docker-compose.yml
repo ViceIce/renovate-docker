@@ -1,0 +1,30 @@
+version: "2.1"
+services:
+  db:
+    image: mysql:5.7.26
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      TZ: "Europe/Berlin"
+      MYSQL_ROOT_PASSWORD: "bbs!test123"
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+  server:
+    build: .
+    environment:
+      TZ: "Europe/Berlin"
+    volumes:
+      - ./bbs:/var/atlassian/application-data/bitbucket
+    ports:
+      - "7990:7990"
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7990/status"]
+      timeout: 20s
+      retries: 10
