@@ -1,4 +1,4 @@
-FROM atlassian/bitbucket-server:6.6.0
+FROM atlassian/bitbucket-server:6.6.2
 
 
 ENV MYSQL_VERSION 5.1.47
